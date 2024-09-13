@@ -60,5 +60,6 @@ export default class Middleware {
             this.lastMiddleware.next = this.generateMiddlewareItem(callBack);
             this.lastMiddleware = this.lastMiddleware.next;
         }
+        return this;
     }
 }
