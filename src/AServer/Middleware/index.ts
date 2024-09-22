@@ -3,7 +3,7 @@ import { generateContext } from "../tools/content";
 import AppInstance from "../AppInstance";
 
 interface MiddlewareFNs {
-    callBack: (this: CTX, ctx: CTX, next: () => Promise<void>) => Promise<void>;
+    middlewareCallBack: (this: CTX, ctx: CTX, next: () => Promise<void>) => Promise<void>;
     next: MiddlewareFNs | null;
 }
 
@@ -31,9 +31,9 @@ export default class Middleware {
                         ctx
                     );
                 }.bind(this);
-                return currentMiddleware.callBack.call(ctx, ctx, runtimeFN);
+                return currentMiddleware.middlewareCallBack.call(ctx, ctx, runtimeFN);
             } else {
-                return currentMiddleware.callBack.call(
+                return currentMiddleware.middlewareCallBack.call(
                     ctx,
                     ctx,
                     async () => {}
@@ -45,19 +45,19 @@ export default class Middleware {
     };
     private lastMiddleware?: MiddlewareFNs;
 
-    private generateMiddlewareItem = (callBack: MiddlewareFNs["callBack"]) => {
+    private generateMiddlewareItem = (middlewareCallBack: MiddlewareFNs["middlewareCallBack"]) => {
         return {
-            callBack,
+            middlewareCallBack,
             next: null,
         };
     };
 
-    use(callBack: MiddlewareFNs["callBack"]) {
+    use(middlewareFunction: MiddlewareFNs["middlewareCallBack"]) {
         if (!this.lastMiddleware) {
-            this.middleware = this.generateMiddlewareItem(callBack);
+            this.middleware = this.generateMiddlewareItem(middlewareFunction);
             this.lastMiddleware = this.middleware;
         } else {
-            this.lastMiddleware.next = this.generateMiddlewareItem(callBack);
+            this.lastMiddleware.next = this.generateMiddlewareItem(middlewareFunction);
             this.lastMiddleware = this.lastMiddleware.next;
         }
         return this;
