@@ -15,7 +15,6 @@ export default class AServer extends Middleware {
     }
 
     /**
-     * 
      * @returns 处理 http.createServer
      */
     handlingService() {
@@ -50,6 +49,7 @@ export default class AServer extends Middleware {
         console.log("AServer createServer ");
         this.server = createServer(this.handlingService());
         callBack?.();
+        return this;
     }
 
     listen(port: number, callBack?: () => void) {
@@ -62,5 +62,7 @@ export default class AServer extends Middleware {
         } else {
             throw Error("Please execute app.ready()");
         }
+
+        return this;
     }
 }
