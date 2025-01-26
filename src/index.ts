@@ -18,6 +18,11 @@ server
 
 server.use(async function (ctx, next) {
     await next();
+    const res = await this.app.request(
+        "https://finance.yahoo.com/quote/USDINR=X/"
+    );
+
+    console.log(res.data);
 
     const fileData = await readFileSync(
         path.join(__dirname, "../large_json.json")
@@ -25,8 +30,7 @@ server.use(async function (ctx, next) {
 
     ctx.data = JSON.parse(fileData);
 });
-console.log('???');
 
-server.listen(9090, () => {
+server.ready().listen(9090, () => {
     console.log("http://localhost:9090");
 });

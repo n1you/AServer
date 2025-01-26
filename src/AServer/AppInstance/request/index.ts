@@ -1,4 +1,4 @@
-import { request as HR, IncomingMessage, RequestOptions } from "http";
+import { IncomingMessage, RequestOptions } from "http";
 import { Interface } from "readline";
 
 type UT = string | URL;
@@ -9,20 +9,20 @@ interface NR<P> extends RequestOptions {
 
 export function request<P extends Record<string, any>, R>(
     url: UT,
-    _config: NR<P>
+    _config?: NR<P>
 ) {
     return new Promise<{
         data: R | Buffer[];
         status: IncomingMessage["statusCode"];
         msg: IncomingMessage["statusMessage"];
         _originalResponse: IncomingMessage;
-    }>((resolve, reject) => {
+    }>(async (resolve, reject) => {
         let _U = url as URL;
         if (typeof url === "string") {
             _U = new URL(url);
         }
 
-        const { data: _data, ...configs } = _config;
+        const { data: _data, ...configs } = _config ?? {};
         let data = _data;
         if (configs.method?.toLowerCase() === "get" && _data) {
             data = undefined;
@@ -34,7 +34,13 @@ export function request<P extends Record<string, any>, R>(
             method: "get",
             ...configs,
         };
-        const req = HR(_U, config, (res) => {
+
+        const requestFn =
+            _U.protocol.indexOf("https") >= 0
+                ? (await import("https")).request
+                : (await import("http")).request;
+
+        const req = requestFn(_U, config, (res) => {
             let data: string | Buffer[];
             res.on("data", (chunk: Buffer) => {
                 try {
