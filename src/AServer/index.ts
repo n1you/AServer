@@ -1,8 +1,8 @@
 import { createServer, IncomingMessage, ServerResponse } from "node:http";
-import Middleware from "./middleware2";
+import Middleware from "./middleware";
 
 import { generateContext } from "./tools/content";
-import AppInstance from "./appInstance2";
+import AppInstance from "./appInstance";
 
 export default class AServer extends Middleware {
     private server?: ReturnType<typeof createServer>;
