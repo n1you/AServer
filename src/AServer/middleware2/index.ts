@@ -1,6 +1,6 @@
 import { ServerResponse, type IncomingMessage } from "node:http";
 import { generateContext } from "../tools/content";
-import AppInstance from "../AppInstance";
+import AppInstance from "../appInstance2";
 
 interface MiddlewareFNs {
     middlewareCallBack: (this: CTX, ctx: CTX, next: () => Promise<void>) => Promise<void>;
